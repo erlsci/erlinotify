@@ -1,5 +1,6 @@
 -module(erlinotify_tests).
 -include_lib("eunit/include/eunit.hrl").
+-spec test () -> term().
 
 setup() ->
     %% Suppress so we can have some peace.
@@ -15,6 +16,7 @@ cleanup(_Arg) ->
     application:stop(ets_manager),
     error_logger:tty(true).
 
+-spec basic_test_ () -> none().
 basic_test_() ->
     {setup,
      fun setup/0,

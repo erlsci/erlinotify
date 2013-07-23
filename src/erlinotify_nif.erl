@@ -17,36 +17,26 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
-%% @spec start() -> {ok,term()} | {error, errorinfo()}
-%%
-%%
 %% @doc Start inotify by creating a file descriptor and spawing a
 %% thread that will poll the file descriptor for any events.
+-spec start () -> {ok, term()} | {error, term()}.
 start() ->
     ?nif_stub.
 
-%% @spec stop(Result) -> {ok,term()} | {error, errorinfo()}
-%%
-%%
 %% @doc Stop inotify by closing the file descriptor to it and
 %% implicitly killing the spawned thread?
+-spec stop (term()) -> {ok, term()} | {error, term()}.
 stop(_Ref) ->
     ?nif_stub.
 
-%% @spec add_watch(Result, Dirname) -> {ok,int()} | {error, errorinfo()}
-%%       Result = term()
-%%       Dirname = filelib:dirname()
-%%
 %% @doc Add a directoy to watch for changes returning an integer
-%% referance to it.
+%% reference to it.
+-spec add_watch (term(), filelib:dirname()) -> {ok, integer()} | {error, term()}.
 add_watch(_Ref, _Dirname) ->
     ?nif_stub.
 
-%% @spec remove_watch(Result, Wd) -> ok | {error, errorinfo()}
-%%       Result = term()
-%%       Wd = int()
-%%
 %% @doc Remove a watching directory by supplying the integer reference.
+-spec remove_watch (term(), integer()) -> ok | {error, term()}.
 remove_watch(_Ref, _Wd) ->
     ?nif_stub.
 
@@ -81,13 +71,16 @@ init() ->
 -ifdef(TEST).
 
 -include_lib("eunit/include/eunit.hrl").
+-spec test () -> term().
 
+-spec basic_test () -> none().
 basic_test() ->
     {ok, Ref} = start(),
     ?assertEqual({ok,1}, add_watch(Ref, "/tmp/")),
     ?assertEqual(ok, remove_watch(Ref, 1)),
     ?assertEqual(ok, stop(Ref)).
 
+-spec thread_test () -> none().
 thread_test() ->
     Path = "/tmp/test/",
     Filename = "monkey",
