@@ -16,6 +16,7 @@
 %% API functions
 %% ===================================================================
 
+-spec start_link () -> supervisor:startlink_ret().
 start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
@@ -23,6 +24,11 @@ start_link() ->
 %% Supervisor callbacks
 %% ===================================================================
 
+-spec init (term())
+  ->
+	  {ok,{
+		    {supervisor:strategy(),non_neg_integer(),pos_integer()},
+				[supervisor:child_spec()]
+		}}.
 init([]) ->
     {ok, { {one_for_one, 5, 10}, [?CHILD(erlinotify, worker)] } }.
-
