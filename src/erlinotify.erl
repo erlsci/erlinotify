@@ -26,14 +26,10 @@
 %% Record Definitions
 %% ------------------------------------------------------------------
 
-%% @type state() = Record :: #state{ fd = term(),
-%%                                   dirnames = ets:tid(),
-%%                                   watchdescriptors = ets:tid(),
-%%                                   callback= term() }.
-
 -type fd() :: non_neg_integer().
 -type callback() :: term().
 -record(state, {fd :: fd(), callbacks :: callback(), dirnames :: ets:tid(), watchdescriptors :: ets:tid()}).
+-type state() :: #state{}.
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
@@ -64,9 +60,7 @@ unwatch(Name) ->
 %%          {stop, Reason}
 %%----------------------------------------------------------------------
 
--spec init(term())
-    -> {ok, term()} | {ok, term(), non_neg_integer() | infinity} 
-    | ignore | {stop, term()}.
+-spec init(term()) -> {ok, state()}.
 init([]) ->
     {ok, Fd} = erlinotify_nif:start(),
     {ok, Ds} = ets_manager:give_me(dirnames),
@@ -219,7 +213,7 @@ rewatch(State) ->
 rewatch(State, '$end_of_table') ->
     {ok, State};
 rewatch(State, Key) ->
-    do_watch(Key, State),
+    #state{fd = _F, callbacks = _C, dirnames = _D, watchdescriptors = _W} = do_watch(Key, State),
     NextKey = ets:next(State#state.dirnames, Key),
     rewatch(State, NextKey).
 

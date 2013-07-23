@@ -10,7 +10,7 @@
 %% ===================================================================
 
 -spec start(normal | {takeover,node()} | {failover,node()}, term())
-  -> {error, _} | {ok, pid()} | {ok, pid(),_}.
+  -> {error, _} | {ok, pid()}.
 start(_StartType, _StartArgs) ->
     erlinotify_sup:start_link().
 
