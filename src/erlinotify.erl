@@ -40,11 +40,11 @@ start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
 % TODO: CB type?
--spec watch(Dirname :: filelib:dirname(), any()) -> ok.
+-spec watch(Dirname :: file:name(), any()) -> ok.
 watch(Name, CB) ->
     gen_server:cast(?MODULE, {watch, Name, CB}).
 
--spec unwatch(Dirname :: filelib:dirname()) -> ok.
+-spec unwatch(Dirname :: file:name()) -> ok.
 unwatch(Name) ->
     gen_server:cast(?MODULE, {unwatch, Name}).
 
@@ -160,7 +160,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 %% @doc Makes a call to the nif to add a resource to
 %% watch. Logs on error
--spec do_watch(Dirname :: filelib:dirname(), State::state())
+-spec do_watch(Dirname :: file:name(), State::state())
     -> State::state().
 do_watch(Dirname, State) ->
     case erlinotify_nif:add_watch(State#state.fd, Dirname) of
@@ -171,7 +171,7 @@ do_watch(Dirname, State) ->
     end.
 
 % TODO: CB type?
--spec do_watch(Dirname :: filelib:dirname(), any(), State::state())
+-spec do_watch(Dirname :: file:name(), any(), State::state())
     -> State::state().
 do_watch(Dirname, CB, State) ->
     case erlinotify_nif:add_watch(State#state.fd, Dirname) of
@@ -185,7 +185,7 @@ do_watch(Dirname, CB, State) ->
 
 %% @doc Makes a call to the nif to remove a resource to
 %% watch. Logs on error
--spec do_unwatch(Dirname :: filelib:dirname(), State::state())
+-spec do_unwatch(Dirname :: file:name(), State::state())
     -> State::state().
 do_unwatch(Dirname, State) ->
     case ets:lookup(State#state.dirnames, Dirname) of
@@ -206,7 +206,7 @@ rewatch(State) ->
     Key = ets:first(State#state.dirnames),
     rewatch(State, Key).
 
--spec rewatch (State::state(), Key::term()) -> {ok, State::state()}.
+-spec rewatch (State::state(), Key::atom() | [atom() | [any()] | char()]) -> {ok, State::state()}.
 rewatch(State, '$end_of_table') ->
     {ok, State};
 rewatch(State, Key) ->

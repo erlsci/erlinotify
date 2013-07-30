@@ -31,7 +31,7 @@ stop(_Ref) ->
 
 %% @doc Add a directoy to watch for changes returning an integer
 %% reference to it.
--spec add_watch (term(), filelib:dirname()) -> {ok, integer()} | {error, term()}.
+-spec add_watch (term(), file:name()) -> {ok, integer()} | {error, term()}.
 add_watch(_Ref, _Dirname) ->
     ?nif_stub.
 
