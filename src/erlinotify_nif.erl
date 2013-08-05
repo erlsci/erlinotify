@@ -71,7 +71,6 @@ init() ->
 -ifdef(TEST).
 
 -include_lib("eunit/include/eunit.hrl").
--spec test () -> term().
 
 -spec basic_test () -> none().
 basic_test() ->
@@ -100,4 +99,5 @@ spawn_watcher(Path, Filename) ->
         ?assertEqual(ok, stop(Ref))
     end.
 
--endif.
+-spec test () -> term().
+-endif. %% TEST
