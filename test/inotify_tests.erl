@@ -8,8 +8,7 @@ setup() ->
     error_logger:tty(false),
     Path = "/tmp/test/",
     ok = filelib:ensure_dir(Path),
-    application:start(ets_manager),
-    application:start(inotify),
+    application:ensure_all_started(inotify),
     Path.
 
 cleanup(_Arg) ->
