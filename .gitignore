@@ -8,3 +8,8 @@ deps/
 doc/
 .eunit/
 rel/inotify
+_build
+rebar.lock
+c_src/inotify_nif.d
+compile_commands.json
+
