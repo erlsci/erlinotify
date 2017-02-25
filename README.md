@@ -13,18 +13,19 @@ changes to a watched descriptor.
 
 Add the library to your rebar config
 
-```
-{
-  deps,
-  [
+```erlang
+{deps, [
    {notify, {git, "https://github.com/erlsci/inotify.git", {tag, "v0.5.0,"}}},
    ....
-  ]
-}.
-
+]}.
 ```
 
-Then just use rebar to get the deps and use in your code.
+Then just use `rebar3` to download, compile (including the NIF), and use in
+your code:
+
+```bash
+$ rebar3 compile
+```
 
 ## Usage
 
