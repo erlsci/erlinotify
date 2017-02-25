@@ -24,7 +24,8 @@ basic_test_() ->
      fun(Path) ->
               Ref = self(),
               inotify:watch(Path,
-                               fun(Var) -> Ref ! ?_assertMatch({Path,file,_Event,0,"monkey"}, Var) end ),
+                               fun(Var) ->
+                                Ref ! ?_assertMatch({Path,file,_Event,0,"monkey"}, Var) end),
               ok = file:write_file(Path++"monkey", "testing123", [write]),
               receive
                   Assert -> Assert

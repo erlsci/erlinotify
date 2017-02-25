@@ -1,13 +1,13 @@
 inotify
 =======
 
-Notification of inotify events
+Supervisted Erlang binding for inotify
 
 ## Description
 
-The library interfaces with inotify using erlang NIF. The NIF spawns
-off a thread which then polls the inotify file descriptor for any
-changes to a watched descriptor.
+The library interfaces with inotify using and Erlang NIF. The NIF spawns off a
+thread which then polls the inotify file descriptor for any changes to a
+watched descriptor.
 
 ## Installation
 

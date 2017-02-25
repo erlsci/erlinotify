@@ -1,13 +1,12 @@
 {application, inotify,
  [
-  {description, "Capture inotify events"},
+  {description, "Supervisted Erlang binding for inotify"},
   {vsn, "0.5.0"},
   {registered, []},
   {applications, [
-                  kernel,
-                  stdlib,
-                  ets_manager
-                 ]},
+    kernel,
+    stdlib,
+    ets_manager]},
   {mod, {inotify_app, []}},
   {env, []}
- ]}.
+]}.

@@ -1,4 +1,4 @@
-Dipesh Patel ( rewrote to use erlang NIF )
+Dipesh Patel (rewrote to use erlang NIF)
 Jeff Miller (original author)
 Alexander Harju (bug fixes)
 Mats Cronqvist (bug fixes, build system)
