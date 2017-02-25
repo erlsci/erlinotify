@@ -1,5 +1,5 @@
-erlinotify
-==========
+inotify
+=======
 
 Notification of inotify events
 
@@ -17,7 +17,7 @@ Add the library to your rebar config
 {
   deps,
   [
-   {erlnotify, "0.1.*", {git, "git://github.com/dipthegeezer/erlinotify.git", "HEAD"}},
+   {notify, {git, "https://github.com/erlsci/inotify.git", {tag, "v0.5.0,"}}},
    ....
   ]
 }.

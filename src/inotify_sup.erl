@@ -1,5 +1,5 @@
 
--module(erlinotify_sup).
+-module(inotify_sup).
 
 -behaviour(supervisor).
 
@@ -31,4 +31,4 @@ start_link() ->
 				[supervisor:child_spec()]
 		}}.
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, [?CHILD(erlinotify, worker)] } }.
+    {ok, { {one_for_one, 5, 10}, [?CHILD(inotify, worker)] } }.

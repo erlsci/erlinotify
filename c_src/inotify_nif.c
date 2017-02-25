@@ -1,5 +1,5 @@
 #include "erl_nif.h"
-#include "erlinotify_nif.h"
+#include "inotify_nif.h"
 #include <sys/inotify.h>
 #include <string.h>
 #include <unistd.h>
@@ -19,19 +19,19 @@ without the need to explicitly join. */
 
 static ErlNifFunc nif_funcs[] =
 {
-    {"start", 0, erlinotify_nif_start},
-    {"stop", 1, erlinotify_nif_stop},
-    {"add_watch", 2, erlinotify_nif_add_watch},
-    {"remove_watch", 2, erlinotify_nif_remove_watch}
+    {"start", 0, inotify_nif_start},
+    {"stop", 1, inotify_nif_stop},
+    {"add_watch", 2, inotify_nif_add_watch},
+    {"remove_watch", 2, inotify_nif_remove_watch}
 };
 
 static ERL_NIF_TERM
-erlinotify_nif_start(ErlNifEnv* env,
+inotify_nif_start(ErlNifEnv* env,
                      int argc,
                      const ERL_NIF_TERM argv[])
 {
   state_t* state =
-    enif_alloc_resource(erlinotify_nif_RESOURCE,
+    enif_alloc_resource(inotify_nif_RESOURCE,
                         sizeof(state_t));
   if (NULL == state) return enif_make_tuple2(env,
     enif_make_atom(env, "error"),
@@ -43,7 +43,7 @@ erlinotify_nif_start(ErlNifEnv* env,
 
   if (0 != enif_thread_create("", &(state->qthread), thr_main, state, NULL)) {
     enif_release_resource(state);
-    return enif_make_tuple2(env, 
+    return enif_make_tuple2(env,
       enif_make_atom(env, "error"),
       enif_make_string(env, "unable to create thread", ERL_NIF_LATIN1)
     );
@@ -53,7 +53,7 @@ erlinotify_nif_start(ErlNifEnv* env,
 }
 
 static ERL_NIF_TERM
-erlinotify_nif_stop(ErlNifEnv* env,
+inotify_nif_stop(ErlNifEnv* env,
                     int argc,
                     const ERL_NIF_TERM argv[])
 {
@@ -67,11 +67,11 @@ erlinotify_nif_stop(ErlNifEnv* env,
 
   if (!enif_get_resource(
                          env, argv[0],
-                         erlinotify_nif_RESOURCE,
+                         inotify_nif_RESOURCE,
                          (void**) &state)) {
     return enif_make_badarg(env);
   }
-  /* let the gc do the work. NOTE: enif_free wil segfault, 
+  /* let the gc do the work. NOTE: enif_free wil segfault,
   MUST use enif_release_resource here */
   enif_release_resource(state);
 
@@ -88,13 +88,13 @@ erlinotify_nif_stop(ErlNifEnv* env,
 }
 
 static void
-erlinotify_nif_resource_cleanup(ErlNifEnv* env, void* arg)
+inotify_nif_resource_cleanup(ErlNifEnv* env, void* arg)
 {
     /* empty as for now */
 }
 
 static ERL_NIF_TERM
-erlinotify_nif_add_watch(ErlNifEnv* env,
+inotify_nif_add_watch(ErlNifEnv* env,
                          int argc,
                          const ERL_NIF_TERM argv[])
 {
@@ -110,7 +110,7 @@ erlinotify_nif_add_watch(ErlNifEnv* env,
 
   if( !enif_get_resource(
                          env, argv[0],
-                         erlinotify_nif_RESOURCE,
+                         inotify_nif_RESOURCE,
                          (void**) &state)) {
     return enif_make_badarg(env);
   }
@@ -135,7 +135,7 @@ erlinotify_nif_add_watch(ErlNifEnv* env,
 }
 
 static ERL_NIF_TERM
-erlinotify_nif_remove_watch(ErlNifEnv* env,
+inotify_nif_remove_watch(ErlNifEnv* env,
                          int argc,
                          const ERL_NIF_TERM argv[])
 {
@@ -150,7 +150,7 @@ erlinotify_nif_remove_watch(ErlNifEnv* env,
 
   if( !enif_get_resource(
                          env, argv[0],
-                         erlinotify_nif_RESOURCE,
+                         inotify_nif_RESOURCE,
                          (void**) &state)) {
     return enif_make_badarg(env);
   }
@@ -299,13 +299,13 @@ on_load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info)
       ERL_NIF_RT_CREATE | ERL_NIF_RT_TAKEOVER;
     ErlNifResourceType* rt =
       enif_open_resource_type(env, NULL,
-                              "erlinotify_nif_resource",
-                              &erlinotify_nif_resource_cleanup,
+                              "inotify_nif_resource",
+                              &inotify_nif_resource_cleanup,
                               flags, NULL);
     if (rt == NULL)
       return -1;
 
-    erlinotify_nif_RESOURCE = rt;
+    inotify_nif_RESOURCE = rt;
 
     return 0;
 }
@@ -320,4 +320,4 @@ on_unload(ErlNifEnv* env, void* priv_data)
 {
 }
 
-ERL_NIF_INIT(erlinotify_nif, nif_funcs, &on_load, NULL, &on_upgrade, &on_unload);
+ERL_NIF_INIT(inotify_nif, nif_funcs, &on_load, NULL, &on_upgrade, &on_unload);

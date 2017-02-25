@@ -1,5 +1,6 @@
--module(erlinotify_tests).
+-module(inotify_tests).
 -include_lib("eunit/include/eunit.hrl").
+
 -spec test () -> term().
 
 setup() ->
@@ -8,11 +9,11 @@ setup() ->
     Path = "/tmp/test/",
     ok = filelib:ensure_dir(Path),
     application:start(ets_manager),
-    application:start(erlinotify),
+    application:start(inotify),
     Path.
 
 cleanup(_Arg) ->
-    application:stop(erlinotify),
+    application:stop(inotify),
     application:stop(ets_manager),
     error_logger:tty(true).
 
@@ -23,7 +24,7 @@ basic_test_() ->
      fun cleanup/1,
      fun(Path) ->
               Ref = self(),
-              erlinotify:watch(Path,
+              inotify:watch(Path,
                                fun(Var) -> Ref ! ?_assertMatch({Path,file,_Event,0,"monkey"}, Var) end ),
               ok = file:write_file(Path++"monkey", "testing123", [write]),
               receive

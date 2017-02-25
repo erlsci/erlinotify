@@ -1,4 +1,4 @@
--module(erlinotify_nif).
+-module(inotify_nif).
 
 -export([start/0,
          stop/1,

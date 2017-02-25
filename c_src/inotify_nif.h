@@ -1,5 +1,5 @@
-#ifndef __ERLINOTIFY_NIF_QUEUE_H
-#define __ERLINOTIFY_NIF_QUEUE_H
+#ifndef __inotify_NIF_QUEUE_H
+#define __inotify_NIF_QUEUE_H
 
 #include "erl_nif.h"
 
@@ -10,21 +10,21 @@ typedef struct
   ErlNifPid pid;
 } state_t;
 
-static ErlNifResourceType* erlinotify_nif_RESOURCE = NULL;
+static ErlNifResourceType* inotify_nif_RESOURCE = NULL;
 
 static ERL_NIF_TERM
-erlinotify_nif_start(ErlNifEnv* env, int argc,
+inotify_nif_start(ErlNifEnv* env, int argc,
                              const ERL_NIF_TERM argv[]);
 
 static ERL_NIF_TERM
-erlinotify_nif_stop(ErlNifEnv* env, int argc,
+inotify_nif_stop(ErlNifEnv* env, int argc,
                              const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM
-erlinotify_nif_add_watch(ErlNifEnv* env, int argc,
+inotify_nif_add_watch(ErlNifEnv* env, int argc,
                           const ERL_NIF_TERM argv[]);
 
 static ERL_NIF_TERM
-erlinotify_nif_remove_watch(ErlNifEnv* env, int argc,
+inotify_nif_remove_watch(ErlNifEnv* env, int argc,
                           const ERL_NIF_TERM argv[]);
 
 static ERL_NIF_TERM

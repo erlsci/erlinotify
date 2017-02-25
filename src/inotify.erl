@@ -1,5 +1,6 @@
--module(erlinotify).
+-module(inotify).
 -behaviour(gen_server).
+
 -define(SERVER, ?MODULE).
 
 -define(log(T),
@@ -62,9 +63,9 @@ unwatch(Name) ->
 
 -spec init(term()) -> {'ok', #state{
     fd::'undefined' | non_neg_integer(), dirnames::'undefined' | ets:tid(),
-		watchdescriptors::'undefined' | ets:tid()}}.
+                watchdescriptors::'undefined' | ets:tid()}}.
 init(_Args) ->
-    {ok, Fd} = erlinotify_nif:start(),
+    {ok, Fd} = inotify_nif:start(),
     {ok, Ds} = ets_manager:give_me(dirnames),
     {ok, Wds} = ets_manager:give_me(watchdescriptors),
     {ok, CBs} = ets_manager:give_me(callbacks, [bag]),
@@ -147,7 +148,7 @@ handle_info(Info, State) ->
 %%----------------------------------------------------------------------
 -spec terminate(_, state()) -> {close, fd()}.
 terminate(_Reason, #state{fd = Fd}) ->
-    {ok, _State} = erlinotify_nif:stop(Fd),
+    {ok, _State} = inotify_nif:stop(Fd),
     {close, Fd}.
 
 -spec code_change(_, State::state(), _) -> {ok, State::state()}.
@@ -163,7 +164,7 @@ code_change(_OldVsn, State, _Extra) ->
 -spec do_watch(Dirname :: file:name(), State::state())
     -> State::state().
 do_watch(Dirname, State) ->
-    case erlinotify_nif:add_watch(State#state.fd, Dirname) of
+    case inotify_nif:add_watch(State#state.fd, Dirname) of
         {ok, Wd} -> ets:insert(State#state.watchdescriptors, {Wd, Dirname}),
                     State;
         Error -> ?log([Error, Dirname]),
@@ -174,7 +175,7 @@ do_watch(Dirname, State) ->
 -spec do_watch(Dirname :: file:name(), any(), State::state())
     -> State::state().
 do_watch(Dirname, CB, State) ->
-    case erlinotify_nif:add_watch(State#state.fd, Dirname) of
+    case inotify_nif:add_watch(State#state.fd, Dirname) of
         {ok, Wd} -> ets:insert(State#state.dirnames, {Dirname, Wd}),
                     ets:insert(State#state.callbacks, {Dirname, CB}),
                     ets:insert(State#state.watchdescriptors, {Wd, Dirname}),
@@ -194,7 +195,7 @@ do_unwatch(Dirname, State) ->
             ets:delete(State#state.dirnames, Dirname),
             ets:delete(State#state.callbacks, Dirname),
             ets:delete(State#state.watchdescriptors, Wd),
-            ok = erlinotify_nif:remove_watch(State#state.fd, Wd),
+            ok = inotify_nif:remove_watch(State#state.fd, Wd),
             State
     end.
 
@@ -214,4 +215,4 @@ rewatch(State, Key) ->
     NextKey = ets:next(State#state.dirnames, Key),
     rewatch(State, NextKey).
 
-%% EOF erlinotify.erl
+%% EOF inotify.erl

@@ -1,13 +1,13 @@
-{application, erlinotify,
+{application, inotify,
  [
   {description, "Capture inotify events"},
-  {vsn, git},
+  {vsn, "0.5.0"},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib,
                   ets_manager
                  ]},
-  {mod, { erlinotify_app, []}},
+  {mod, {inotify_app, []}},
   {env, []}
  ]}.

@@ -1,4 +1,4 @@
--module(erlinotify_app).
+-module(inotify_app).
 
 -behaviour(application).
 
@@ -12,7 +12,7 @@
 -spec start(normal | {takeover,node()} | {failover,node()}, term())
   -> {error, _} | {ok, pid()}.
 start(_StartType, _StartArgs) ->
-    erlinotify_sup:start_link().
+    inotify_sup:start_link().
 
 -spec stop(term()) -> ok.
 stop(_State) ->
