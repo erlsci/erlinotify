@@ -14,23 +14,26 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/0, watch/2, unwatch/1]).
+-export([start_link/0,
+         watch/2,
+         unwatch/1]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
 %% ------------------------------------------------------------------
 
--export([init/1, handle_call/3, handle_cast/2, handle_info/2,
-         terminate/2, code_change/3]).
+-export([init/1,
+         handle_call/3,
+         handle_cast/2,
+         handle_info/2,
+         terminate/2,
+         code_change/3]).
 
 %% ------------------------------------------------------------------
-%% Record Definitions
+%% Record and Type Definitions
 %% ------------------------------------------------------------------
 
--type fd() :: non_neg_integer().
--type callback() :: term().
--record(state, {fd :: fd(), callbacks :: callback(), dirnames :: ets:tid(), watchdescriptors :: ets:tid()}).
--type state() :: #state{}.
+-include_lib("inotify/include/state.hrl").
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
@@ -66,9 +69,9 @@ unwatch(Name) ->
                 watchdescriptors::'undefined' | ets:tid()}}.
 init(_Args) ->
     {ok, Fd} = inotify_nif:start(),
-    {ok, Ds} = ets_manager:give_me(dirnames),
-    {ok, Wds} = ets_manager:give_me(watchdescriptors),
-    {ok, CBs} = ets_manager:give_me(callbacks, [bag]),
+    {ok, Ds} = ets_manager:create_or_return(dirnames),
+    {ok, Wds} = ets_manager:create_or_return(watchdescriptors),
+    {ok, CBs} = ets_manager:create_or_return(callbacks, [bag]),
     {ok, #state{fd=Fd, callbacks = CBs, dirnames = Ds, watchdescriptors = Wds}}.
 
 %%----------------------------------------------------------------------
