@@ -1,4 +1,5 @@
 -module(inotify_tests).
+
 -include_lib("eunit/include/eunit.hrl").
 
 -spec test () -> term().
