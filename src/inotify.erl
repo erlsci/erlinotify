@@ -151,7 +151,14 @@ handle_info(Info, State) ->
 %%----------------------------------------------------------------------
 -spec terminate(_, state()) -> {close, fd()}.
 terminate(_Reason, #state{fd = Fd}) ->
-    {ok, _State} = inotify_nif:stop(Fd),
+    case inotify_nif:stop(Fd) of
+        ok ->
+            ok;
+        {ok, _State} ->
+            ok;
+        Result ->
+            ?log({unexpected_result, Result})
+    end,
     {close, Fd}.
 
 -spec code_change(_, State::state(), _) -> {ok, State::state()}.
