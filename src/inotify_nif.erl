@@ -41,7 +41,7 @@ remove_watch(_Ref, _Wd) ->
     ?nif_stub.
 
 %% ------------------------------------------------------------------
-%% Internal Function Definitions
+%% Utility Function Definitions
 %% ------------------------------------------------------------------
 
 %% @spec nif_stub_error(Linenumber) -> ok
@@ -64,40 +64,3 @@ init() ->
                       Path
               end,
     erlang:load_nif(filename:join(PrivDir, ?MODULE), 0).
-
-%% ===================================================================
-%% EUnit tests
-%% ===================================================================
--ifdef(TEST).
-
--include_lib("eunit/include/eunit.hrl").
-
--spec basic_test () -> none().
-basic_test() ->
-    {ok, Ref} = start(),
-    ?assertEqual({ok,1}, add_watch(Ref, "/tmp/")),
-    ?assertEqual(ok, remove_watch(Ref, 1)),
-    ?assertEqual(ok, stop(Ref)).
-
--spec thread_test () -> none().
-thread_test() ->
-    Path = "/tmp/test/",
-    Filename = "monkey",
-    ok = filelib:ensure_dir(Path),
-    _P = spawn(spawn_watcher(Path, Filename)),
-    ok = file:write_file(Path++Filename, "testing123", [write]).
-
-spawn_watcher(Path, Filename) ->
-    fun() ->
-        {ok, Ref} = start(),
-        ?assertEqual({ok,1}, add_watch(Ref, Path)),
-        receive
-            {inotify_event, 1, file, _Event, 0, File} ->
-                ?assertEqual(Filename, File)
-        end,
-        ?assertEqual(ok, remove_watch(Ref, 1)),
-        ?assertEqual(ok, stop(Ref))
-    end.
-
--spec test () -> term().
--endif. %% TEST
