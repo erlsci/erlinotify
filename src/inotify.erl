@@ -3,9 +3,14 @@
 
 -define(SERVER, ?MODULE).
 
--define(log(T),
+-define(log_error(T),
+        error_logger:error_report(
+          [process_info(self(),current_function),{line,?LINE},T])).
+
+-define(log_info(T),
         error_logger:info_report(
           [process_info(self(),current_function),{line,?LINE},T])).
+
 %% TODO
 %% Docs
 %% Ets table to store Dir
@@ -39,7 +44,8 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
--spec start_link() -> {ok, Pid :: pid()} | ignore | {error, {already_started, Pid :: pid()} | term()}.
+-spec start_link() ->
+    {ok, Pid :: pid()} | ignore | {error, {already_started, Pid :: pid()} | term()}.
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
@@ -102,7 +108,7 @@ handle_cast({watch, Watch, CB}, State) ->
 handle_cast({unwatch, Unwatch}, State) ->
   {noreply, do_unwatch(Unwatch, State)};
 handle_cast(Msg, State) ->
-  ?log({unknown_message, Msg}),
+  ?log_info({unknown_message, Msg}),
   {noreply, State}.
 
 %%----------------------------------------------------------------------
@@ -116,11 +122,12 @@ handle_cast(Msg, State) ->
 handle_info({inotify_event, _WD, file, ignored, _Cookie, _File} = _Info, State) ->
     %% ignore unwatched messages.
     {noreply, State};
-handle_info({inotify_event, Wd, Type, Event, Cookie, Name} = Info, State) ->
+handle_info({inotify_event, Wd, Type, Event, Cookie, Name} = _Info, State) ->
   case ets:lookup(State#state.watchdescriptors, Wd) of
-      [] -> ?log({unknown_file_watch, Info}),
+      [] -> %%?log_info({unknown_file_watch, _Info}),
             {noreply, State};
       [{Wd, File}] ->
+            %%?log_info({known_file_watch, Info}),
             [_Look] = [CB({File, Type, Event, Cookie, Name}) ||
                 {_File, CB} <- ets:lookup(State#state.callbacks, File)],
             {noreply, State}
@@ -128,20 +135,20 @@ handle_info({inotify_event, Wd, Type, Event, Cookie, Name} = Info, State) ->
 handle_info({'ETS-TRANSFER', _Tid, _Pid, new_table}, State) ->
     %% log at some point?
     {noreply, State};
-handle_info({'ETS-TRANSFER', Tid, _Pid, reissued} = Info, State) ->
-    ?log({rewatch_this, Info}),
+handle_info({'ETS-TRANSFER', Tid, _Pid, reissued} = _Info, State) ->
+    %%?log_info({rewatch_this, _Info}),
     case ets:info(Tid, name) of
         dirnames -> case rewatch(State) of
                         {ok, State} -> ok,
                                        {noreply, State};
-                        Error -> ?log({error,Error}),
+                        Error -> ?log_error({error,Error}),
                                  {noreply, State}
                     end;
-        _DontCare -> ?log({ignored, Info}),
+        _DontCare -> %%?log_info({ignored, _Info}),
                      {noreply, State}
     end;
 handle_info(Info, State) ->
-  ?log({unknown_message, Info}),
+  ?log_info({unknown_message, Info}),
   {noreply, State}.
 
 %%----------------------------------------------------------------------
@@ -157,7 +164,7 @@ terminate(_Reason, #state{fd = Fd}) ->
         {ok, _State} ->
             ok;
         Result ->
-            ?log({unexpected_result, Result})
+            ?log_info({unexpected_result, Result})
     end,
     {close, Fd}.
 
@@ -177,7 +184,7 @@ do_watch(Dirname, State) ->
     case inotify_nif:add_watch(State#state.fd, Dirname) of
         {ok, Wd} -> ets:insert(State#state.watchdescriptors, {Wd, Dirname}),
                     State;
-        Error -> ?log([Error, Dirname]),
+        Error -> ?log_error([Error, Dirname]),
                  State
     end.
 
@@ -190,7 +197,7 @@ do_watch(Dirname, CB, State) ->
                     ets:insert(State#state.callbacks, {Dirname, CB}),
                     ets:insert(State#state.watchdescriptors, {Wd, Dirname}),
                     State;
-        Error -> ?log([Error, Dirname]),
+        Error -> ?log_error([Error, Dirname]),
                  State
     end.
 
