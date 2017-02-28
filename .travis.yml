@@ -5,6 +5,7 @@ before_script:
     - chmod +x rebar3
 env:
   - PATH=".:$PATH"
+  - DEBUG=1
 script:
   - rebar3 compile
   - rebar3 eunit
