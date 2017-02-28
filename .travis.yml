@@ -6,7 +6,7 @@ before_script:
 env:
   - PATH=".:$PATH"
 script:
-  - DEBUG=1 rebar3 compile
+  - rebar3 compile
   - rebar3 eunit
 otp_release:
   - 19.2
