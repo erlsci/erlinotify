@@ -9,7 +9,8 @@ script:
   - rebar3 compile
   - rebar3 eunit
 otp_release:
-  - 19.2
+  - 20.0
+  - 19.3
   - 18.3
   - 17.5
   - R16B03-1
